@@ -1,0 +1,98 @@
+class Flower:
+    def __init__(self, name, price, quantity):
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+
+    def __str__(self):
+        return f"{self.name} - Price: ${self.price:.2f} - Quantity: {self.quantity}"
+
+class Bouquet:
+    def __init__(self, name, flowers):
+        self.name = name
+        self.flowers = flowers
+
+    def get_total_cost(self):
+        total_cost = 0
+        for flower, quantity in self.flowers.items():
+            total_cost += flower.price * quantity
+        return total_cost
+
+    def __str__(self):
+        flower_list = "\n".join([f"{flower.name} x {quantity}" for flower, quantity in self.flowers.items()])
+        return f"Bouquet Name: {self.name}\nFlowers:\n{flower_list}\nTotal Cost: ${self.get_total_cost():.2f}"
+
+class FlowerShop:
+    def __init__(self):
+        self.flower_inventory = {}
+
+    def add_flower(self, flower):
+        if flower.name in self.flower_inventory:
+            self.flower_inventory[flower.name].quantity += flower.quantity
+        else:
+            self.flower_inventory[flower.name] = flower
+
+    def create_bouquet(self, name, flower_quantities):
+        flowers_in_bouquet = {}
+        for flower_name, quantity in flower_quantities.items():
+            if flower_name in self.flower_inventory:
+                if self.flower_inventory[flower_name].quantity >= quantity:
+                    flowers_in_bouquet[self.flower_inventory[flower_name]] = quantity
+                    self.flower_inventory[flower_name].quantity -= quantity
+                else:
+                    print(f"Not enough {flower_name} in stock to create the bouquet.")
+                    return None
+            else:
+                print(f"{flower_name} not available in the inventory.")
+                return None
+
+        return Bouquet(name, flowers_in_bouquet)
+
+    def sell_bouquet(self, bouquet):
+        for flower, quantity in bouquet.flowers.items():
+            self.flower_inventory[flower.name].quantity += quantity
+        print(f"Bouquet '{bouquet.name}' sold. Earned ${bouquet.get_total_cost():.2f}")
+
+    def display_inventory(self):
+        print("\nFlower Inventory:")
+        for flower in self.flower_inventory.values():
+            print(flower)
+
+def main():
+    flower_shop = FlowerShop()
+    rose = Flower(name="Rose", price=1.50, quantity=20)
+    lily = Flower(name="Lily", price=2.00, quantity=15)
+    tulip = Flower(name="Tulip", price=1.75, quantity=10)
+
+    flower_shop.add_flower(rose)
+    flower_shop.add_flower(lily)
+    flower_shop.add_flower(tulip)
+
+    flower_shop.display_inventory()
+
+    bouquet1 = flower_shop.create_bouquet(name="Birthday Bouquet", flower_quantities={"Rose": 5, "Lily": 3})
+    if bouquet1:
+        flower_shop.sell_bouquet(bouquet1)
+
+    bouquet2 = flower_shop.create_bouquet(name="Anniversary Bouquet", flower_quantities={"Lily": 8, "Tulip": 5})
+    if bouquet2:
+        flower_shop.sell_bouquet(bouquet2)
+
+    flower_shop.display_inventory()
+
+if __name__ == "__main__":
+    main()
+
+output:
+
+Flower Inventory:
+Rose - Price: $1.50 - Quantity: 20
+Lily - Price: $2.00 - Quantity: 15
+Tulip - Price: $1.75 - Quantity: 10
+Bouquet 'Birthday Bouquet' sold. Earned $13.50
+Bouquet 'Anniversary Bouquet' sold. Earned $24.75
+
+Flower Inventory:
+Rose - Price: $1.50 - Quantity: 20
+Lily - Price: $2.00 - Quantity: 15
+Tulip - Price: $1.75 - Quantity: 10
