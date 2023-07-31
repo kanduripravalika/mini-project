@@ -1,0 +1,79 @@
+class Account():
+    def __init__(self, account_number, balance):
+        self.account_number = account_number
+        self.balance = balance
+    def deposit(self, amount):
+        pass
+    def withdraw(self, amount):
+        pass
+    def get_balance(self):
+        return self.balance
+class CheckingAccount(Account):
+    def __init__(self, account_number, balance, overdraft_limit):
+        super().__init__(account_number, balance)
+        self.overdraft_limit = overdraft_limit
+    def deposit(self, amount):
+        self.balance += amount
+    def withdraw(self, amount):
+        if self.balance - amount >= -self.overdraft_limit:
+            self.balance -= amount
+        else:
+            print("Insufficient funds for withdrawal!")
+class SavingsAccount(Account):
+    def __init__(self, account_number, balance, interest_rate):
+        super().__init__(account_number, balance)
+        self.interest_rate = interest_rate
+    def deposit(self, amount):
+        self.balance += amount
+    def withdraw(self, amount):
+        if self.balance - amount >= 0:
+            self.balance -= amount
+        else:
+            print("Insufficient funds for withdrawal!")
+    def apply_interest(self):
+        self.balance += self.balance * self.interest_rate
+class BusinessAccount(Account):
+    def __init__(self, account_number, balance, transaction_fee):
+        super().__init__(account_number, balance)
+        self.transaction_fee = transaction_fee
+    def deposit(self, amount):
+        self.balance += amount
+    def withdraw(self, amount):
+        if self.balance - (amount + self.transaction_fee) >= 0:
+            self.balance -= (amount + self.transaction_fee)
+        else:
+            print("Insufficient funds for withdrawal!")
+def main():    
+    checking_account = CheckingAccount(account_number="CH1001", balance=1000, overdraft_limit=500)
+    savings_account = SavingsAccount(account_number="SV2001", balance=5000, interest_rate=0.05)
+    business_account = BusinessAccount(account_number="BU3001", balance=20000, transaction_fee=5)
+
+    print("Initial Balances:")
+    print(f"Checking Account: {checking_account.get_balance()}")
+    print(f"Savings Account: {savings_account.get_balance()}")
+    print(f"Business Account: {business_account.get_balance()}")
+    
+    checking_account.withdraw(1500)
+    savings_account.deposit(1000)
+    business_account.withdraw(500)
+    
+    savings_account.apply_interest()
+   
+    print("\nUpdated Balances:")
+    print(f"Checking Account: {checking_account.get_balance()}")
+    print(f"Savings Account: {savings_account.get_balance()}")
+    print(f"Business Account: {business_account.get_balance()}")
+            
+if __name__ == "__main__":
+    main()
+
+output:
+Initial Balances:
+Checking Account: 1000
+Savings Account: 5000
+Business Account: 20000
+
+Updated Balances:
+Checking Account: -500
+Savings Account: 6300.0
+Business Account: 19495
